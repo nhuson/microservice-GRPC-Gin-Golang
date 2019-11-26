@@ -12,7 +12,7 @@ service Users {
 }
 
 message User {
-  string id = 1;
+  int32 id = 1;
   string username = 2;
   string password = 3;
   string email = 4;
@@ -26,7 +26,7 @@ message FindAllRequest {
 }
 
 message FindAllResponse {
-  string status = 1;
+  bool status = 1;
   string message = 2;
   repeated User data = 3;
 }

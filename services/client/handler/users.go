@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"log"
 	usersv "micr-go/services/users/pb"
 
@@ -15,7 +16,7 @@ var user UserHandler
 
 func (u *UserHandler) connGrpc() *grpc.ClientConn {
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial(":7777", grpc.WithInsecure())
+	conn, err := grpc.Dial(fmt.Sprintf(":3000"), grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %s", err)
 	}
@@ -23,12 +24,7 @@ func (u *UserHandler) connGrpc() *grpc.ClientConn {
 	return conn
 }
 
-type Datatest struct {
-	Page    string `json:page`
-	PerPage string `json:per_page`
-}
-
-func FindAll(c *gin.Context) {
+func FindAllUser(c *gin.Context) {
 	conn := user.connGrpc()
 	defer conn.Close()
 

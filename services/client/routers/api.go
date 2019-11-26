@@ -13,9 +13,8 @@ func Api() *gin.Engine {
 	router.GET("/api/v1/ping", handler.Pong)
 
 	userR := router.Group("/api/v1/users")
-	var userH handler.UserHandler
 	{
-		userR.GET("/ping", userH.FindAll)
+		userR.GET("", handler.FindAllUser)
 	}
 
 	router.Run(fmt.Sprintf("0.0.0.0:%s", heplers.Getenv("PORT")))

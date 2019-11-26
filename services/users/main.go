@@ -38,7 +38,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	server := handler.Users{}
+	server := handler.UsersHandler{}
 	srv := grpc.NewServer()
 	pb.RegisterUsersServer(srv, &server)
 	srv.Serve(lis)
