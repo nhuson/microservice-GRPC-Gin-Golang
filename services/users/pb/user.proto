@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package users;
+
+service Users {
+  rpc FindAll(FindAllRequest) returns (FindAllResponse);
+  // rpc FineOne(GetOneRequest) returns (GetOneResponse);
+  // rpc CreateUser(CreateRequest) returns (CreateResponse);
+  // rpc UpdateUser(UpdateRequest) returns (UpdateResponse);
+  // rpc DeleteUser(DeleteRequest) returns (DeleteResponse);
+    
+}
+
+message User {
+  string id = 1;
+  string username = 2;
+  string password = 3;
+  string email = 4;
+  string address = 5;
+  string phone = 6;
+}
+
+message FindAllRequest {
+  string page = 1;
+  string per_page = 2;
+}
+
+message FindAllResponse {
+  string status = 1;
+  string message = 2;
+  repeated User data = 3;
+}
+
+// message CreateRequest {
+//   User user = 1;
+// }
+
+// message CreateResponse {
+//   string status = 1;
+//   string message = 2;
+// }
+
+// message UpdateRequest {
+//   string id = 1;
+//   User user = 2;
+// }
+
+// message UpdateResponse {
+//   string status = 1;
+//   string message = 2;
+// }
+
+// message DeleteRequest {
+//   string id = 1;
+// }
+
+// message DeleteResponse {
+//   string status = 1;
+//   string message = 2;
+// }
+
+// message GetOneRequest {
+//   string id = 1;
+// }
+
+// message GetOneResponse {
+//   string status = 1;
+//   string message = 2;
+//   User user = 3;
+// }

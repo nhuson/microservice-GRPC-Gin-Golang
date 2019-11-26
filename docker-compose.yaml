@@ -1,0 +1,23 @@
+version: "3.3"
+services: 
+  # redis:
+  #   image: redis
+  #   container_name: go_redis
+  #   ports:
+  #     - 6379:6379
+  #   networks:
+  #     - data
+  mongodb:
+    image: mongo:latest
+    container_name: "go_mongo"
+    environment:
+      - MONGO_DATA_DIR=/data/db
+    volumes:
+      - ./data/db:/data/db
+    ports:
+        - 27017:27017
+    networks:
+      - data
+networks:
+  data: 
+  

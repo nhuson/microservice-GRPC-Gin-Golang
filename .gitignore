@@ -1,0 +1,5 @@
+vendor
+Gopkg.lock
+micro-app
+data
+.env
