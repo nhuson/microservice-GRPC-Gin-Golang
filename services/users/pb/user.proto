@@ -5,14 +5,14 @@ package users;
 service Users {
   rpc FindAll(FindAllRequest) returns (FindAllResponse);
   // rpc FineOne(GetOneRequest) returns (GetOneResponse);
-  // rpc CreateUser(CreateRequest) returns (CreateResponse);
+  rpc CreateUser(CreateRequest) returns (CreateResponse);
   // rpc UpdateUser(UpdateRequest) returns (UpdateResponse);
   // rpc DeleteUser(DeleteRequest) returns (DeleteResponse);
     
 }
 
 message User {
-  int32 id = 1;
+  string id = 1;
   string username = 2;
   string password = 3;
   string email = 4;
@@ -31,14 +31,14 @@ message FindAllResponse {
   repeated User data = 3;
 }
 
-// message CreateRequest {
-//   User user = 1;
-// }
+message CreateRequest {
+  User user = 1;
+}
 
-// message CreateResponse {
-//   string status = 1;
-//   string message = 2;
-// }
+message CreateResponse {
+  bool status = 1;
+  string message = 2;
+}
 
 // message UpdateRequest {
 //   string id = 1;

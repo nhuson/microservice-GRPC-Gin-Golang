@@ -3,7 +3,7 @@ package routers
 import (
 	"fmt"
 	"micr-go/core/heplers"
-	"micr-go/services/client/handler"
+	"micr-go/services/gateway/handler"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,6 +11,7 @@ import (
 func Api() *gin.Engine {
 	router := gin.Default()
 	router.GET("/api/v1/ping", handler.Pong)
+	router.POST("/api/v1/signup", handler.CreateUser)
 
 	userR := router.Group("/api/v1/users")
 	{

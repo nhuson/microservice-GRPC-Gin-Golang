@@ -1,7 +1,7 @@
 package main
 
 import (
-	"micr-go/services/client/routers"
+	"micr-go/services/gateway/routers"
 )
 
 func main() {
