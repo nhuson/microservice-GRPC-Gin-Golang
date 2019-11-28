@@ -3,24 +3,28 @@ package repo
 import (
 	"context"
 	"micr-go/core/db"
-	pb "micr-go/services/users/pb"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type User struct{}
 
 func getInstance() *mongo.Collection {
-	conn := db.Connect("USER_MONGO_URL")
-	database := conn.Database("users")
-	collection := database.Collection("user")
-
-	return collection
+	conn := db.Connect("USER_MONGO_URL").Database("users").Collection("users")
+	return conn
 }
 
-func (u *User) CreateUser(user *pb.User) error {
+func (u *User) CreateUser(user UserItem) (*mongo.InsertOneResult, error) {
 	userModel := getInstance()
-	_, err := userModel.InsertOne(context.Background(), user)
+	res, err := userModel.InsertOne(context.Background(), user)
 
-	return err
+	return res, err
+}
+
+func (u *User) FindOne(ctx context.Context, options bson.M) *mongo.SingleResult {
+	userModel := getInstance()
+	resp := userModel.FindOne(ctx, options)
+
+	return resp
 }

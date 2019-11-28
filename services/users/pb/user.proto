@@ -2,22 +2,20 @@ syntax = "proto3";
 
 package users;
 
-service Users {
-  rpc FindAll(FindAllRequest) returns (FindAllResponse);
-  // rpc FineOne(GetOneRequest) returns (GetOneResponse);
-  rpc CreateUser(CreateRequest) returns (CreateResponse);
-  // rpc UpdateUser(UpdateRequest) returns (UpdateResponse);
-  // rpc DeleteUser(DeleteRequest) returns (DeleteResponse);
-    
-}
+import "google/protobuf/timestamp.proto";
+// import "micr-go/core/pb/tagger.proto";
+// import "micr-go/core/pb/objectid.proto";
 
 message User {
+  // pmongo.ObjectId id = 1 [(tagger.tags) = "bson:\"_id,omitempty\"" ];
   string id = 1;
   string username = 2;
   string password = 3;
   string email = 4;
   string address = 5;
   string phone = 6;
+  google.protobuf.Timestamp createdAt = 7;
+  google.protobuf.Timestamp updatedAt = 8;
 }
 
 message FindAllRequest {
@@ -38,6 +36,8 @@ message CreateRequest {
 message CreateResponse {
   bool status = 1;
   string message = 2;
+  User user = 3;
+  string token = 4;
 }
 
 // message UpdateRequest {
@@ -68,3 +68,12 @@ message CreateResponse {
 //   string message = 2;
 //   User user = 3;
 // }
+
+service Users {
+  rpc FindAll(FindAllRequest) returns (FindAllResponse);
+  // rpc FineOne(GetOneRequest) returns (GetOneResponse);
+  rpc CreateUser(CreateRequest) returns (CreateResponse);
+  // rpc UpdateUser(UpdateRequest) returns (UpdateResponse);
+  // rpc DeleteUser(DeleteRequest) returns (DeleteResponse);
+    
+}

@@ -1,0 +1,8 @@
+syntax="proto3";
+package pmongo;
+
+option go_package = "github.com/amsokol/mongo-go-driver-protobuf/pmongo";
+
+message ObjectId{
+    string value = 1;
+}

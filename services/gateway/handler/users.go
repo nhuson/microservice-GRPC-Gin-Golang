@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"log"
 	"micr-go/core/heplers"
+	"micr-go/services/gateway/validator"
 	usersv "micr-go/services/users/pb"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"google.golang.org/grpc"
 )
 
@@ -43,13 +45,16 @@ func CreateUser(c *gin.Context) {
 	conn := user.connGrpc()
 	defer conn.Close()
 	u := usersv.NewUsersClient(conn)
+	var v validator.CreateUser
+	if errValid := c.ShouldBindWith(&v, binding.Form); errValid != nil {
+		c.AbortWithStatusJSON(400, gin.H{"status": false, "error": errValid})
+		return
+	}
 
 	req := usersv.User{
-		Username: "test",
-		Password: "123123",
-		Email:    "nhuson1094@gmail.com",
-		Address:  "12",
-		Phone:    "09231453",
+		Username: c.PostForm("username"),
+		Password: c.PostForm("password"),
+		Email:    c.PostForm("email"),
 	}
 
 	resp, err := u.CreateUser(context.Background(), &usersv.CreateRequest{
