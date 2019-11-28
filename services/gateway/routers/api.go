@@ -12,6 +12,7 @@ func Api() *gin.Engine {
 	router := gin.Default()
 	router.GET("/api/v1/ping", handler.Pong)
 	router.POST("/api/v1/signup", handler.CreateUser)
+	router.POST("/api/v1/login", handler.LoginUser)
 
 	userR := router.Group("/api/v1/users")
 	{

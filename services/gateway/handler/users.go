@@ -42,14 +42,15 @@ func FindAllUser(c *gin.Context) {
 }
 
 func CreateUser(c *gin.Context) {
-	conn := user.connGrpc()
-	defer conn.Close()
-	u := usersv.NewUsersClient(conn)
 	var v validator.CreateUser
 	if errValid := c.ShouldBindWith(&v, binding.Form); errValid != nil {
 		c.AbortWithStatusJSON(400, gin.H{"status": false, "error": errValid})
 		return
 	}
+
+	conn := user.connGrpc()
+	defer conn.Close()
+	u := usersv.NewUsersClient(conn)
 
 	req := usersv.User{
 		Username: c.PostForm("username"),
@@ -67,4 +68,27 @@ func CreateUser(c *gin.Context) {
 	}
 
 	c.JSON(200, resp)
+}
+
+func LoginUser(c *gin.Context) {
+	var v validator.CreateUser
+	if errValid := c.ShouldBindWith(&v, binding.Form); errValid != nil {
+		c.AbortWithStatusJSON(400, gin.H{"status": false, "error": errValid})
+		return
+	}
+
+	conn := user.connGrpc()
+	defer conn.Close()
+	u := usersv.NewUsersClient(conn)
+	res, err := u.LoginUser(context.Background(), &usersv.LoginRequest{
+		Email:    c.PostForm("email"),
+		Password: c.PostForm("password"),
+	})
+
+	if err != nil {
+		c.AbortWithStatusJSON(500, gin.H{"status": false, "error": err})
+		return
+	}
+
+	c.JSON(200, res)
 }
