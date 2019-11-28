@@ -92,6 +92,10 @@ func (u *UsersHandler) LoginUser(ctx context.Context, req *pb.LoginRequest) (*pb
 
 func (u *UsersHandler) FindAll(ctx context.Context, req *pb.FindAllRequest) (*pb.FindAllResponse, error) {
 	log.Printf("Receive message %s", req.Page)
+	count, err := user.FindAll(ctx)
+	if err == nil {
+		log.Println(count)
+	}
 	users := []*pb.User{
 		{
 			Username: "Son",
