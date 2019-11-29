@@ -1,15 +1,8 @@
 version: "3.3"
 services: 
-  # redis:
-  #   image: redis
-  #   container_name: go_redis
-  #   ports:
-  #     - 6379:6379
-  #   networks:
-  #     - data
-  mongodb-go:
+  mongodb-user:
     image: mongo:latest
-    container_name: "go_mongo"
+    container_name: "user_db"
     environment:
       - MONGO_DATA_DIR=/data/db
     volumes:
@@ -17,7 +10,51 @@ services:
     ports:
         - 27017:27017
     networks:
-      - data-go
+      - backend-go
+  users:
+    restart: always
+    container_name: user_service
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - SERVICE=users
+        - PORT=2000
+    depends_on:
+      - "mongodb-user"
+    ports:
+      - "2000:2000"
+    environment:
+      APP_NAME: "Micro-GRPC"
+      APP_ENV: "development"
+      PORT: "2000"
+      SERVICE_NAME: "User service"
+      USER_MONGO_URL: "mongodb://mongodb-user:27017/users"
+      SECRET_KEY: "secretgomrico"
+    networks:
+      - backend-go
+  gateway:
+    restart: always
+    container_name: gateway_service
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - SERVICE=gateway
+        - PORT=8080
+    depends_on:
+      - "users"
+    ports:
+      - "8080:8080"
+    environment:
+      APP_NAME: "Micro-GRPC"
+      APP_ENV: "development"
+      PORT: "8080"
+      SERVICE_NAME: "Gateway service"
+      USER_SERVICE_PORT: "2000"
+      SECRET_KEY: "secretgomrico"
+    networks:
+      - backend-go         
 networks:
-  data-go: 
+  backend-go: 
   
