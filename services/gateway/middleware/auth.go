@@ -14,7 +14,7 @@ import (
 )
 
 func findUserByEmail(email string) (*pb.GetOneResponse, error) {
-	conn, err := grpc.Dial(fmt.Sprintf(":%s", heplers.Getenv("USER_SERVICE_PORT")), grpc.WithInsecure())
+	conn, err := grpc.Dial(heplers.Getenv("USER_SERVICE"), grpc.WithInsecure())
 	if err != nil {
 		log.Printf("did not connect: %v", err)
 	}

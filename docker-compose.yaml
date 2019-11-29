@@ -51,7 +51,7 @@ services:
       APP_ENV: "development"
       PORT: "8080"
       SERVICE_NAME: "Gateway service"
-      USER_SERVICE_PORT: "2000"
+      USER_SERVICE: "users:2000"
       SECRET_KEY: "secretgomrico"
     networks:
       - backend-go         

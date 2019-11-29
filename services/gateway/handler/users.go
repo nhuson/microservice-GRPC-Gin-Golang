@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"micr-go/core/heplers"
 	"micr-go/services/gateway/validator"
@@ -19,7 +18,7 @@ var user UserHandler
 
 func (u *UserHandler) connGrpc() *grpc.ClientConn {
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial(fmt.Sprintf(":%s", heplers.Getenv("USER_SERVICE_PORT")), grpc.WithInsecure())
+	conn, err := grpc.Dial(heplers.Getenv("USER_SERVICE"), grpc.WithInsecure())
 	if err != nil {
 		log.Printf("did not connect: %v", err)
 	}
