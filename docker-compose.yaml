@@ -7,7 +7,7 @@ services:
   #     - 6379:6379
   #   networks:
   #     - data
-  mongodb:
+  mongodb-go:
     image: mongo:latest
     container_name: "go_mongo"
     environment:
@@ -17,7 +17,7 @@ services:
     ports:
         - 27017:27017
     networks:
-      - data
+      - data-go
 networks:
-  data: 
+  data-go: 
   

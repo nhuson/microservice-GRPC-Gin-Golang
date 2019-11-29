@@ -41,6 +41,25 @@ func FindAllUser(c *gin.Context) {
 	c.JSON(200, resp)
 }
 
+func FineOneUser(c *gin.Context) {
+	conn := user.connGrpc()
+	defer conn.Close()
+	u := usersv.NewUsersClient(conn)
+	email, id := c.Query("email"), c.Query("id")
+
+	resp, err := u.FineOne(context.Background(), &usersv.GetOneRequest{
+		Id:    id,
+		Email: email,
+	})
+
+	if err != nil {
+		c.AbortWithStatusJSON(500, gin.H{"status": false, "error": err})
+		return
+	}
+
+	c.JSON(200, resp)
+}
+
 func CreateUser(c *gin.Context) {
 	var v validator.CreateUser
 	if errValid := c.ShouldBindWith(&v, binding.Form); errValid != nil {

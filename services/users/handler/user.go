@@ -3,7 +3,6 @@ package handler
 import (
 	"context"
 	"errors"
-	"log"
 	"micr-go/core/heplers"
 	pb "micr-go/services/users/pb"
 	"micr-go/services/users/repo"
@@ -20,7 +19,6 @@ var user repo.User
 type UsersHandler struct{}
 
 func (u *UsersHandler) CreateUser(ctx context.Context, req *pb.CreateRequest) (*pb.CreateResponse, error) {
-	log.Println("Create user.")
 	userReq := req.GetUser()
 	userFind := user.FindOne(ctx, bson.M{"email": userReq.GetEmail()})
 	var uItem = repo.UserItem{}
@@ -53,7 +51,6 @@ func (u *UsersHandler) CreateUser(ctx context.Context, req *pb.CreateRequest) (*
 }
 
 func (u *UsersHandler) LoginUser(ctx context.Context, req *pb.LoginRequest) (*pb.CreateResponse, error) {
-	log.Println("Login method.")
 	userFind := user.FindOne(ctx, bson.M{"email": req.GetEmail()})
 	var uItem = repo.UserItem{}
 	if error := userFind.Decode(&uItem); error != nil {
@@ -91,31 +88,54 @@ func (u *UsersHandler) LoginUser(ctx context.Context, req *pb.LoginRequest) (*pb
 }
 
 func (u *UsersHandler) FindAll(ctx context.Context, req *pb.FindAllRequest) (*pb.FindAllResponse, error) {
-	log.Printf("Receive message %s", req.Page)
-	count, err := user.FindAll(ctx)
-	if err == nil {
-		log.Println(count)
+	cursor, _ := user.FindAll(ctx)
+	defer cursor.Close(ctx)
+	userItem := repo.UserItem{}
+	users := []*pb.User{}
+
+	for cursor.Next(ctx) {
+		if err := cursor.Decode(&userItem); err != nil {
+			return nil, errors.New("Error decode users")
+		}
+		users = append(users, &pb.User{
+			Id:       userItem.ID.Hex(),
+			Username: userItem.Username,
+			Email:    userItem.Email,
+			Address:  userItem.Address,
+			Phone:    userItem.Phone,
+		})
 	}
-	users := []*pb.User{
-		{
-			Username: "Son",
-			Password: "123",
-			Email:    "nhuson994@gmail.com",
-			Address:  "Hanoi",
-			Phone:    "09613435079",
-		},
-		{
-			Username: "Steven",
-			Password: "123",
-			Email:    "steven94@gmail.com",
-			Address:  "HaiDuong",
-			Phone:    "09613435079",
-		},
-	}
+
 	data := pb.FindAllResponse{
 		Status:  true,
 		Message: "Get Users",
 		Data:    users,
 	}
+	return &data, nil
+}
+
+func (u *UsersHandler) FineOne(ctx context.Context, req *pb.GetOneRequest) (*pb.GetOneResponse, error) {
+	objID, _ := primitive.ObjectIDFromHex(req.GetId())
+	userFind := user.FindOne(ctx, bson.M{"$or": []bson.M{
+		bson.M{"_id": objID},
+		bson.M{"email": req.GetEmail()},
+	}})
+	var uItem = repo.UserItem{}
+	if error := userFind.Decode(&uItem); error != nil {
+		return nil, errors.New("User cannot found")
+	}
+
+	data := pb.GetOneResponse{
+		Status:  true,
+		Message: "Get user",
+		Data: &pb.User{
+			Id:       uItem.ID.Hex(),
+			Username: uItem.Username,
+			Email:    uItem.Email,
+			Phone:    uItem.Phone,
+			Address:  uItem.Address,
+		},
+	}
+
 	return &data, nil
 }
