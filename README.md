@@ -7,6 +7,7 @@ Gateway service is provider restful api to client connect data .
 ![](https://outcrawl.com/static/7b089f424d0abd2c29eb2d51ed362550/3ea43/architecture.jpg)
 
 ## The element in one service: 
+```
 ├── handler
 │   └── hander.go
 ├── main.go
@@ -16,6 +17,7 @@ Gateway service is provider restful api to client connect data .
 └── repo
     ├── repo.go
     └── entity.go
+```    
     
 - Run project with dev environment by `docker-compose up -d`. 
 - Gateway service run at `http://localhost:8080`
