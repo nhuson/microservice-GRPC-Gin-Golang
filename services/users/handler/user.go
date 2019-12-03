@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"errors"
+	"log"
 	"micr-go/core/heplers"
 	pb "micr-go/services/users/pb"
 	"micr-go/services/users/repo"
@@ -26,7 +27,7 @@ func (u *UsersHandler) CreateUser(ctx context.Context, req *pb.CreateRequest) (*
 		return nil, errors.New("User already exist")
 	}
 
-	res, err := user.CreateUser(repo.UserItem{
+	res, err := user.CreateUser(ctx, repo.UserItem{
 		Email:    userReq.GetEmail(),
 		Password: heplers.Encrypt(userReq.GetPassword()),
 	})
@@ -51,6 +52,7 @@ func (u *UsersHandler) CreateUser(ctx context.Context, req *pb.CreateRequest) (*
 }
 
 func (u *UsersHandler) LoginUser(ctx context.Context, req *pb.LoginRequest) (*pb.CreateResponse, error) {
+	log.Println("Login method.")
 	userFind := user.FindOne(ctx, bson.M{"email": req.GetEmail()})
 	var uItem = repo.UserItem{}
 	if error := userFind.Decode(&uItem); error != nil {
@@ -138,4 +140,29 @@ func (u *UsersHandler) FineOne(ctx context.Context, req *pb.GetOneRequest) (*pb.
 	}
 
 	return &data, nil
+}
+
+func (u *UsersHandler) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
+	userReq := req.GetUser()
+	var uItem = repo.UserItem{}
+	objID, _ := primitive.ObjectIDFromHex(userReq.GetId())
+	userFind := user.FindOne(ctx, bson.M{"_id": objID})
+	if error := userFind.Decode(&uItem); error != nil {
+		return nil, errors.New("User cannot found to update")
+	}
+
+	_, err := user.UpdateUser(ctx, bson.M{"_id": objID}, bson.M{"$set": bson.M{
+		"address":  userReq.GetAddress(),
+		"phone":    userReq.GetPhone(),
+		"username": userReq.GetUsername(),
+	}})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.UpdateUserResponse{
+		Status:  true,
+		Message: "Update user successfuly!",
+	}, nil
 }

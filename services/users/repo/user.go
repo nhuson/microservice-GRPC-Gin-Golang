@@ -15,9 +15,16 @@ func getInstance() *mongo.Collection {
 	return conn
 }
 
-func (u *User) CreateUser(user UserItem) (*mongo.InsertOneResult, error) {
+func (u *User) CreateUser(ctx context.Context, user UserItem) (*mongo.InsertOneResult, error) {
 	userModel := getInstance()
-	res, err := userModel.InsertOne(context.Background(), user)
+	res, err := userModel.InsertOne(ctx, user)
+
+	return res, err
+}
+
+func (u *User) UpdateUser(ctx context.Context, filter bson.M, user bson.M) (*mongo.UpdateResult, error) {
+	userModel := getInstance()
+	res, err := userModel.UpdateOne(ctx, filter, user)
 
 	return res, err
 }

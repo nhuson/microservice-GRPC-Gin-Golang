@@ -2,6 +2,7 @@ package heplers
 
 import (
 	"log"
+	"os"
 
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
@@ -28,7 +29,7 @@ func ComparePasswords(hashedPwd string, plainPwd string) bool {
 
 func GenerateToken(object *jwt.MapClaims) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, object)
-	string, err := token.SignedString([]byte(Getenv("SECRET_KEY")))
+	string, err := token.SignedString([]byte(os.Getenv("SECRET_KEY")))
 
 	if err != nil {
 		log.Println(err)

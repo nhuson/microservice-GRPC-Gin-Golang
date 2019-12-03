@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"micr-go/core/heplers"
 	pb "micr-go/services/users/pb"
+	"os"
 
 	"github.com/dgrijalva/jwt-go"
 	"google.golang.org/grpc"
@@ -14,7 +14,7 @@ import (
 )
 
 func findUserByEmail(email string) (*pb.GetOneResponse, error) {
-	conn, err := grpc.Dial(heplers.Getenv("USER_SERVICE"), grpc.WithInsecure())
+	conn, err := grpc.Dial(os.Getenv("USER_SERVICE"), grpc.WithInsecure())
 	if err != nil {
 		log.Printf("did not connect: %v", err)
 	}
@@ -37,7 +37,7 @@ func Authorization() gin.HandlerFunc {
 		token = token[7:]
 		mapClaim := jwt.MapClaims{}
 		decode, error := jwt.ParseWithClaims(token, &mapClaim, func(token *jwt.Token) (interface{}, error) {
-			return []byte(heplers.Getenv("SECRET_KEY")), nil
+			return []byte(os.Getenv("SECRET_KEY")), nil
 		})
 		if !decode.Valid {
 			c.JSON(500, gin.H{"status": false, "error": "Unauthorized!"})
@@ -63,6 +63,13 @@ func Authorization() gin.HandlerFunc {
 			return
 		}
 
+		c.Set("user", map[string]interface{}{
+			"id":       user.Data.GetId(),
+			"email":    user.Data.GetEmail(),
+			"address":  user.Data.GetAddress(),
+			"phone":    user.Data.GetPhone(),
+			"username": user.Data.GetUsername(),
+		})
 		c.Next()
 	}
 }

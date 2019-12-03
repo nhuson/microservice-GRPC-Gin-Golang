@@ -45,15 +45,14 @@ message LoginRequest {
   string password = 2;
 }
 
-// message UpdateRequest {
-//   string id = 1;
-//   User user = 2;
-// }
+message UpdateUserRequest {
+  User user = 2;
+}
 
-// message UpdateResponse {
-//   string status = 1;
-//   string message = 2;
-// }
+message UpdateUserResponse {
+  bool status = 1;
+  string message = 2;
+}
 
 // message DeleteRequest {
 //   string id = 1;
@@ -81,7 +80,7 @@ service Users {
   rpc FineOne(GetOneRequest) returns (GetOneResponse);
   rpc CreateUser(CreateRequest) returns (CreateResponse);
   rpc LoginUser(LoginRequest) returns (CreateResponse);
-  // rpc UpdateUser(UpdateRequest) returns (UpdateResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
   // rpc DeleteUser(DeleteRequest) returns (DeleteResponse);
     
 }

@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"log"
 	"micr-go/core/db"
-	"micr-go/core/heplers"
 	"micr-go/services/users/handler"
 	pb "micr-go/services/users/pb"
 	"net"
+	"os"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -30,17 +30,14 @@ func connectMongo() *mongo.Client {
 func main() {
 	mongo := connectMongo()
 	defer mongo.Disconnect(context.Background())
-
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", heplers.Getenv("PORT")))
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", os.Getenv("PORT")))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	server := handler.UsersHandler{}
 	srv := grpc.NewServer()
 	pb.RegisterUsersServer(srv, &server)
-	if error := srv.Serve(lis); error != nil {
-		log.Printf("Error when start server at port %v", error)
-	} else {
-		log.Printf("Server start at port %s", heplers.Getenv("PORT"))
-	}
+	log.Printf("Server start at port %s", os.Getenv("PORT"))
+
+	srv.Serve(lis)
 }

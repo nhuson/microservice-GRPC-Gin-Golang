@@ -6,6 +6,7 @@ import (
 	"micr-go/core/heplers"
 	"micr-go/services/gateway/validator"
 	usersv "micr-go/services/users/pb"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -18,7 +19,7 @@ var user UserHandler
 
 func (u *UserHandler) connGrpc() *grpc.ClientConn {
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial(heplers.Getenv("USER_SERVICE"), grpc.WithInsecure())
+	conn, err := grpc.Dial(os.Getenv("USER_SERVICE"), grpc.WithInsecure())
 	if err != nil {
 		log.Printf("did not connect: %v", err)
 	}
@@ -40,15 +41,14 @@ func FindAllUser(c *gin.Context) {
 	c.JSON(200, resp)
 }
 
-func FineOneUser(c *gin.Context) {
+func FineUserById(c *gin.Context) {
 	conn := user.connGrpc()
 	defer conn.Close()
 	u := usersv.NewUsersClient(conn)
-	email, id := c.Query("email"), c.Query("id")
+	id := c.Param("id")
 
 	resp, err := u.FineOne(context.Background(), &usersv.GetOneRequest{
-		Id:    id,
-		Email: email,
+		Id: id,
 	})
 
 	if err != nil {
@@ -108,5 +108,42 @@ func LoginUser(c *gin.Context) {
 		return
 	}
 
+	c.JSON(200, res)
+}
+
+func UpdateUser(c *gin.Context) {
+	userH := heplers.GetDataHeader(c, "user")
+	if userH["id"] != c.Param("id") {
+		c.AbortWithStatusJSON(400, gin.H{"status": false, "error": "Not role to update this user."})
+		return
+	}
+
+	if c.PostForm("email") != "" {
+		c.AbortWithStatusJSON(400, gin.H{"status": false, "error": "Cannot update email"})
+		return
+	}
+
+	if c.PostForm("password") != "" {
+		c.AbortWithStatusJSON(400, gin.H{"status": false, "error": "Plz call api change password"})
+		return
+	}
+
+	conn := user.connGrpc()
+	defer conn.Close()
+	u := usersv.NewUsersClient(conn)
+	log.Println("ooooooo")
+	res, err := u.UpdateUser(context.Background(), &usersv.UpdateUserRequest{
+		User: &usersv.User{
+			Id:       c.Param("id"),
+			Phone:    c.PostForm("phone"),
+			Address:  c.PostForm("address"),
+			Username: c.PostForm("username"),
+		},
+	})
+
+	if err != nil {
+		c.AbortWithStatusJSON(500, gin.H{"status": false, "error": err})
+		return
+	}
 	c.JSON(200, res)
 }

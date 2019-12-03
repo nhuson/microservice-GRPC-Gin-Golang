@@ -3,14 +3,14 @@ package db
 import (
 	"context"
 	"log"
-	"micr-go/core/heplers"
+	"os"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func Connect(url string) *mongo.Client {
-	client, err := mongo.NewClient(options.Client().ApplyURI(heplers.Getenv(url)))
+	client, err := mongo.NewClient(options.Client().ApplyURI(os.Getenv(url)))
 
 	if err != nil {
 		log.Fatal(err)

@@ -2,9 +2,9 @@ package routers
 
 import (
 	"fmt"
-	"micr-go/core/heplers"
 	"micr-go/services/gateway/handler"
 	"micr-go/services/gateway/middleware"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,9 +21,11 @@ func Api() *gin.Engine {
 	userR := router.Group("/api/v1/users")
 	{
 		userR.GET("", handler.FindAllUser)
+		userR.GET("/:id", handler.FineUserById)
+		userR.PATCH("/:id", handler.UpdateUser)
 	}
 
-	router.Run(fmt.Sprintf("0.0.0.0:%s", heplers.Getenv("PORT")))
+	router.Run(fmt.Sprintf("0.0.0.0:%s", os.Getenv("PORT")))
 
 	return router
 }
