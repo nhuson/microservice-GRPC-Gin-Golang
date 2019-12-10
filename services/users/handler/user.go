@@ -144,18 +144,20 @@ func (u *UsersHandler) FineOne(ctx context.Context, req *pb.GetOneRequest) (*pb.
 
 func (u *UsersHandler) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
 	userReq := req.GetUser()
-	var uItem = repo.UserItem{}
 	objID, _ := primitive.ObjectIDFromHex(userReq.GetId())
-	userFind := user.FindOne(ctx, bson.M{"_id": objID})
-	if error := userFind.Decode(&uItem); error != nil {
-		return nil, errors.New("User cannot found to update")
-	}
-
-	_, err := user.UpdateUser(ctx, bson.M{"_id": objID}, bson.M{"$set": bson.M{
+	array := map[string]interface{}{
 		"address":  userReq.GetAddress(),
 		"phone":    userReq.GetPhone(),
 		"username": userReq.GetUsername(),
-	}})
+	}
+	bsonUpdate := bson.M{}
+	for k, v := range array {
+		if v != "" {
+			bsonUpdate[k] = v
+		}
+	}
+
+	_, err := user.UpdateUser(ctx, bson.M{"_id": objID}, bson.M{"$set": bsonUpdate})
 
 	if err != nil {
 		return nil, err
