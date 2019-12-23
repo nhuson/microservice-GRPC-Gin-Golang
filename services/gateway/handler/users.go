@@ -131,7 +131,6 @@ func UpdateUser(c *gin.Context) {
 	conn := user.connGrpc()
 	defer conn.Close()
 	u := usersv.NewUsersClient(conn)
-	log.Println("ooooooo")
 	res, err := u.UpdateUser(context.Background(), &usersv.UpdateUserRequest{
 		User: &usersv.User{
 			Id:       c.Param("id"),

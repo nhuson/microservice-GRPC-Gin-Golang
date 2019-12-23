@@ -57,4 +57,5 @@ services:
   #     - backend-go         
 networks:
   backend-go: 
+  backend-go-post:
   

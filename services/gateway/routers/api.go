@@ -25,6 +25,12 @@ func Api() *gin.Engine {
 		userR.PATCH("/:id", handler.UpdateUser)
 	}
 
+	postR := router.Group("/api/v1/posts")
+	{
+		postR.GET("", handler.ListPost)
+		postR.POST("", handler.CreatePost)
+	}
+
 	router.Run(fmt.Sprintf("0.0.0.0:%s", os.Getenv("PORT")))
 
 	return router

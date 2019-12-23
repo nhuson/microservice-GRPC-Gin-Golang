@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package posts;
+import "google/protobuf/timestamp.proto";
+import "micr-go/services/users/pb/user.proto";
+
+message Post {
+  // pmongo.ObjectId id = 1 [(tagger.tags) = "bson:\"_id,omitempty\"" ];
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string slug = 4;
+  string user_id = 5;
+  google.protobuf.Timestamp createdAt = 6;
+  google.protobuf.Timestamp updatedAt = 7;
+}
+
+message CreatePostRequest {
+  Post post = 1;
+}
+
+message CreatePostResponse {
+  bool status = 1;
+  string message = 2;
+}
+
+message ListPostRequest {
+  string page = 1;
+  string per_page = 2;
+}
+
+message PostResponse {
+  Post post = 1;
+  users.User user = 2;
+}
+
+message ListPostResponse {
+  bool status = 1;
+  string message = 2;
+  repeated PostResponse data = 3;
+}
+
+
+service Posts {
+  rpc CreatePost (CreatePostRequest) returns (CreatePostResponse);
+  rpc ListPost (ListPostRequest) returns (ListPostResponse);
+}

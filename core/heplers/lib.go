@@ -8,8 +8,8 @@ import (
 
 func GetDataHeader(c *gin.Context, key string) map[string]interface{} {
 	data, error := c.Get(key)
-	if error {
-		log.Println(error)
+	if !error {
+		log.Printf("Can not get %s", key)
 	}
 
 	return data.(map[string]interface{})
