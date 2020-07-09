@@ -1,5 +1,5 @@
 # microservice-GRPC-Gin-Golang
-The repository implement Gin gonic combined with GRPC to build architect microservice. Each service is a sidecar (private database, instance)
+The repository implement Gin gonic combined with GRPC to build infrastructure microservice. Each service is a sidecar (private database, instance)
 
 ## Features
  Per one service in backend communation via grpc.
